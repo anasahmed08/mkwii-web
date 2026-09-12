@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <title>Mario Kart Wii — Browser</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game-canvas" width="1280" height="720" tabindex="0"></canvas>
+    <div id="overlay" class="overlay">
+      <div class="panel">
+        <h1>Mario Kart Wii</h1>
+        <p class="sub">Browser Recompilation + Retro Rewind</p>
+        <div class="mode-row">
+          <label>Mode</label>
+          <select id="mode-select">
+            <option value="local">Local (stub renderer)</option>
+            <option value="server">Server translation (real recomp)</option>
+          </select>
+        </div>
+        <div id="server-url-row" style="display:none">
+          <label>Translation server URL</label>
+          <input type="url" id="server-url" placeholder="http://localhost:8787" />
+        </div>
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="iso-input" accept=".iso,.rvz,.wbfs" hidden />
+          <div class="drop-inner">
+            <span class="icon">&#128191;</span>
+            <p><strong>Select your Mario Kart Wii disc image</strong></p>
+            <p class="hint">PAL RMCP01 &middot; .iso / .rvz / .wbfs</p>
+            <button id="pick-btn">Choose File</button>
+          </div>
+        </div>
+        <div class="mod-section">
+          <h2>Retro Rewind</h2>
+          <label class="toggle">
+            <input type="checkbox" id="rr-toggle" />
+            <span>Enable Retro Rewind</span>
+          </label>
+          <input type="file" id="rr-input" webkitdirectory directory multiple hidden />
+          <button id="rr-pick">Load Retro Rewind Folder</button>
+          <div id="rr-status" class="status">Not loaded</div>
+        </div>
+        <div class="wifi-section">
+          <h2>Retro WFC Online</h2>
+          <label class="toggle">
+            <input type="checkbox" id="wifi-toggle" />
+            <span>Enable Retro WFC (rwfc.net)</span>
+          </label>
+          <button id="rooms-btn">Browse Rooms</button>
+          <div id="wifi-status" class="status">Disabled</div>
+        </div>
+        <div class="progress-wrap hidden" id="progress-wrap">
+          <div class="progress-bar"><div id="progress-fill"></div></div>
+          <div id="progress-label">Initializing&hellip;</div>
+        </div>
+        <button id="start-btn" class="start-btn" disabled>Launch</button>
+        <button id="clear-save-btn" class="ghost-btn">Clear Save Data</button>
+        <div id="log" class="log"></div>
+      </div>
+    </div>
+    <div id="hud" class="hud hidden">
+      <button id="settings-btn" title="Settings">&#9881;</button>
+      <button id="controllers-btn" title="Controllers">&#127918;</button>
+      <button id="rooms-btn-hud" title="Rooms">&#127760;</button>
+      <button id="fullscreen-btn" title="Fullscreen">&#9974;</button>
+      <button id="exit-btn" title="Exit">&#10005;</button>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+mkwii-browser-recomp/
+├── package.json
+├── package.sh
+├── vite.config.js
+├── index.html
+├── README.md
+├── RUN.md
+├── PROJECT_TREE.txt
+├── .gitignore
+├── projects/mkwii/recomp.yml
+├── src/
+│   ├── main.js
+│   ├── worker.js
+│   ├── style.css
+│   ├── logger.js
+│   ├── gpu-init.js
+│   ├── input.js
+│   ├── motion.js
+│   ├── audio.js
+│   ├── perf-monitor.js
+│   ├── profiler.js
+│   ├── settings.js
+│   ├── save-state.js
+│   ├── translate-client.js
+│   ├── mods.js
+│   ├── sw.js
+│   ├── disc/
+│   │   ├── fst.js
+│   │   ├── wii-disc.js
+│   │   ├── rvz.js
+│   │   ├── wbfs.js
+│   │   ├── overlay.js
+│   │   ├── disc-backend.js
+│   │   ├── szs.js
+│   │   ├── u8-writer.js
+│   │   ├── dol.js
+│   │   ├── dol-patcher.js
+│   │   └── lzma.js
+│   ├── mods/rr-patch.js
+│   ├── retrowfc/
+│   │   ├── client.js
+│   │   ├── protocol.js
+│   │   └── launch-patcher.js
+│   └── ui/
+│       ├── settings-panel.js
+│       ├── controller-config.js
+│       ├── room-browser.js
+│       ├── perf-overlay.js
+│       └── profiler-overlay.js
+├── public/
+│   ├── manifest.webmanifest
+│   ├── wasm/
+│   │   ├── .gitkeep
+│   │   └── mkwii_recomp.js
+│   └── worklets/mkwii-pcm.js
+├── wasm/
+│   ├── CMakeLists.txt
+│   ├── main.cpp
+│   ├── build.sh
+│   ├── project/CMakeLists.txt
+│   └── runtime/
+│       ├── prelude.hpp
+│       ├── platform-emscripten.cpp
+│       ├── audio-emscripten.cpp
+│       ├── input-emscripten.cpp
+│       ├── disc_bridge.cpp
+│       ├── memfs-bootstrap.cpp
+│       ├── dol-hook.cpp
+│       ├── motion-emscripten.cpp
+│       ├── network-retrowfc.cpp
+│       ├── gx-webgpu.cpp
+│       ├── libco-emscripten.c
+│       ├── libco.h
+│       ├── libco-override/libco.h
+│       ├── thread-emscripten.cpp
+│       ├── thread-stubs.cpp
+│       ├── os-thread.hpp
+│       ├── os-thread.cpp
+│       └── profiler-emscripten.cpp
+├── server/
+│   ├── package.json
+│   ├── translate-server.mjs
+│   ├── net-bridge.mjs
+│   ├── disc-stage.mjs
+│   ├── retro-wfc.mjs
+│   ├── audit-emitter.mjs
+│   ├── build-cache.mjs
+│   ├── Dockerfile
+│   └── docker-compose.yml
+├── vendor/
+│   ├── setup.sh
+│   └── dol-probe.mjs
+└── docs/
+    ├── EMITTER-CHANGES.md
+    ├── LIBCO-PORT.md
+    ├── LIMITS.md
+    ├── COMPLETION.md
+    └── BUILD.md

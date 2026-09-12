@@ -1,0 +1,16 @@
+{
+  "name": "mkwii-translate-server",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node translate-server.mjs",
+    "bridge": "node net-bridge.mjs",
+    "dev": "node --watch translate-server.mjs"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "ws": "^8.18.0"
+  }
+}

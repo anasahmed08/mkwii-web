@@ -1,0 +1,75 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #e8e8e8;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+#app { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+#game-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; background: #000; outline: none; }
+.overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 30%, #1a1a2e 0%, #000 80%); z-index: 10; padding: 1rem; overflow-y: auto; }
+.overlay.hidden { display: none; }
+.panel { width: 100%; max-width: 520px; background: rgba(20, 20, 30, 0.85);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 2rem 1.5rem;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.panel h1 { font-size: 1.8rem; font-weight: 700;
+  background: linear-gradient(135deg, #ff4757, #ffa502 50%, #2ed573);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+.sub { text-align: center; color: #888; font-size: 0.85rem; margin: 0.25rem 0 1.5rem; }
+.drop-zone { border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px; padding: 2rem 1rem;
+  text-align: center; transition: all 0.2s; cursor: pointer; margin-bottom: 1.5rem; }
+.drop-zone.dragover { border-color: #2ed573; background: rgba(46, 213, 115, 0.05); }
+.drop-inner .icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+.drop-inner p { font-size: 0.95rem; margin-bottom: 0.25rem; }
+.drop-inner .hint { color: #666; font-size: 0.78rem; margin-bottom: 1rem; }
+button { font-family: inherit; font-size: 0.9rem; font-weight: 600; padding: 0.7rem 1.4rem;
+  border: none; border-radius: 8px; background: #2a2a3a; color: #e8e8e8; cursor: pointer; transition: all 0.15s; }
+button:hover:not(:disabled) { background: #3a3a4a; transform: translateY(-1px); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+.start-btn { width: 100%; padding: 1rem; font-size: 1.05rem;
+  background: linear-gradient(135deg, #ff4757, #ff6348); color: white; margin-top: 1rem; }
+.ghost-btn { width: 100%; margin-top: 0.5rem; padding: 0.55rem; background: transparent;
+  border: 1px solid rgba(255,255,255,0.12); color: #888; font-size: 0.8rem; }
+.mod-section, .wifi-section { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem; margin-bottom: 1rem; }
+.mod-section h2, .wifi-section h2 { font-size: 1rem; margin-bottom: 0.75rem; color: #ccc; }
+.toggle { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; cursor: pointer; font-size: 0.9rem; }
+.toggle input { width: 18px; height: 18px; accent-color: #2ed573; }
+#rr-pick, .wifi-section button { width: 100%; margin-bottom: 0.5rem; }
+.status { font-size: 0.78rem; color: #666; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.3);
+  border-radius: 6px; word-break: break-all; }
+.status.ok { color: #2ed573; }
+.status.err { color: #ff4757; }
+.progress-wrap { margin-top: 1rem; }
+.progress-wrap.hidden { display: none; }
+.progress-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem; }
+#progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, #ff4757, #ffa502); transition: width 0.2s; }
+#progress-label { font-size: 0.78rem; color: #888; text-align: center; }
+.log { margin-top: 1rem; max-height: 120px; overflow-y: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem; color: #555; line-height: 1.4; }
+.log .err { color: #ff4757; } .log .ok { color: #2ed573; }
+.mode-row, #server-url-row { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+.mode-row label, #server-url-row label { font-size: 0.85rem; color: #aaa; }
+.mode-row select, #server-url-row input { padding: 0.55rem 0.7rem; background: #1a1a24; color: #eee;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-family: inherit; font-size: 0.9rem; }
+.hud { position: absolute; top: 1rem; right: 1rem; z-index: 20; display: flex; gap: 0.5rem; }
+.hud.hidden { display: none; }
+.hud button { width: 40px; height: 40px; padding: 0; border-radius: 50%; background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px); font-size: 1rem; }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center;
+  justify-content: center; z-index: 100; padding: 1rem; }
+.modal.hidden { display: none; }
+.modal-inner { width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; background: #14141c;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.5rem; }
+.modal h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06); }
+.row label { font-size: 0.9rem; color: #ccc; }
+.row select, .row input[type="text"], .row input[type="url"], .row input[type="number"] {
+  background: #1e1e28; color: #eee; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 0.4rem 0.6rem; font-family: inherit; min-width: 160px; }
+.actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.25rem; }
+.actions button { padding: 0.5rem 1rem; }
+.primary { background: linear-gradient(135deg, #ff4757, #ff6348); color: #fff; }
+@media (max-width: 600px) {
+  .panel { padding: 1.5rem 1.25rem; }
+  .panel h1 { font-size: 1.5rem; }
+  .drop-zone { padding: 1.5rem 0.75rem; }
+}

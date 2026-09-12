@@ -1,0 +1,10 @@
+{
+  "name": "Mario Kart Wii Browser",
+  "short_name": "MKWii",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#ff4757",
+  "icons": []
+}

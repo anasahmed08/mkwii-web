@@ -1,0 +1,20 @@
+{
+  "name": "mkwii-browser-recomp",
+  "version": "0.1.0",
+  "description": "Mario Kart Wii browser recompilation with Retro Rewind and Retro WFC",
+  "type": "module",
+  "scripts": {
+    "setup": "bash vendor/setup.sh",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:wasm": "bash wasm/build.sh",
+    "translate": "node server/translate-server.mjs",
+    "bridge": "node server/net-bridge.mjs",
+    "audit": "node server/audit-emitter.mjs",
+    "package": "bash package.sh"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

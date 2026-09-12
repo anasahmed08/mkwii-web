@@ -1,0 +1,14 @@
+node_modules/
+dist/
+server/work/
+server/node_modules/
+wasm/build/
+vendor/wiicompiled/
+vendor/aurora/
+public/wasm/*.js
+public/wasm/*.wasm
+!public/wasm/mkwii_recomp.js
+public/icon-*.png
+.DS_Store
+*.log
+mkwii-browser-recomp.zip
