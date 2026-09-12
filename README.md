@@ -1,4 +1,4 @@
-﻿# mkwii-web
+﻿# Mario Kart Wii — Browser Recompilation
 Run **Mario Kart Wii** in a browser tab.
 > **Goal:** play MKWii on any device — desktop, Android, or **iPhone/iPad** — from
 > nothing but a ROM and a browser. No Dolphin, no launchers, no downloads beyond
