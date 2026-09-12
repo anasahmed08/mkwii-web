@@ -1,136 +1,80 @@
 # mkwii-web
 
-Run **Mario Kart Wii** in a browser tab.
+**Archived experiment.** Run Mario Kart Wii in a browser tab — abandoned, but the work is here.
 
-> **Goal:** play MKWii on any device — desktop, Android, or **iPhone/iPad** — from
-> nothing but a ROM and a browser. No Dolphin, no launchers, no downloads beyond
-> the disc image you already own.
-
-> **Status:** experimental, incomplete, and honest about it. See
-> [`docs/COMPLETION.md`](docs/COMPLETION.md).
+> **Original goal:** play MKWii on any device — desktop, Android, or iPhone — from
+> nothing but a ROM and a browser.
+>
+> **Outcome:** not viable in 2026. The blockers are documented below. This repo
+> is preserved as an artifact, not a product.
 
 ---
 
-## What this is
+## Why I stopped
 
-A browser front-end wrapped around two existing PC projects:
+Three hard blockers, all outside my control:
 
-- **[WiiCompiled](https://github.com/patchzyy/Wiicompiled)** — a static
-  recompiler that translates Mario Kart Wii's PowerPC code into portable C++,
-  which is then compiled natively. This is the engine.
-- **[WheelWizard](https://github.com/TeamWheelWizard/WheelWizard)** — the mod
-  launcher for Mario Kart Wii, whose Retro Rewind pack format and RWFC online
-  server this project targets.
+1. **The recompiler's C++ emitter emits x86-specific constructs.** Emscripten can't
+   link them without edits to upstream WiiCompiled source I don't own. Documented
+   in [`docs/EMITTER-CHANGES.md`](docs/EMITTER-CHANGES.md).
+2. **aurora's WebGPU backend isn't at parity under wasm64.** The GX→WebGPU layer
+   that would render the game exists but isn't ready.
+3. **Apple hasn't shipped `memory64` in Safari.** No timeline. iOS is the entire
+   point of a browser port, and without it the target platform is unreachable.
 
-This repo adds the missing piece: an **Emscripten + WebGPU platform layer** that
-lets the WiiCompiled runtime and its bundled [aurora](https://github.com/encounter/aurora)
-graphics backend compile to WebAssembly and run in a browser.
+Even if those were solved, a **hosted** version faces legal exposure from
+processing ISOs on my infrastructure, plus bandwidth and CPU costs that make the
+economics ugly. A local-first version — user runs `docker compose up` on their
+own PC — sidesteps the legal issue but is exactly what Dolphin and WiiCompiled
+already do, on platforms that don't have these blockers.
 
-## What works today
+## What actually exists here
+
+This started as a **vibe-coding stress test** — how far could DeepSeek take a
+real, underspecified, multi-week engineering problem without a human stepping in?
+The answer is roughly 80%, and the last 20% is exactly the part that required
+editing upstream code the model couldn't see. That's the interesting finding.
+
+What was built:
 
 - Full web UI: disc loader, settings, controller config, profiler, in-browser log
 - Disc readers for **ISO, RVZ, and WBFS** (FST parser, DOL parser, SZS/Yaz0)
 - **Retro Rewind** mod staging (Riivolution XML + internal SZS injection)
 - **Retro WFC** room browser and DOL hostname patcher
-- Input: keyboard, gamepad, touch, and **gyroscope** (Wii Remote tilt on iPhone)
+- Input: keyboard, gamepad, touch, and gyroscope
 - Save state via IndexedDB, AudioWorklet output pipeline
-- An animated stub renderer that proves the whole worker→WASM→canvas flow
+- An animated stub renderer that proves the full worker→WASM→canvas flow
+- A Docker-based translation service that orchestrates WiiCompiled end-to-end
+- An Emscripten platform layer with a libco→fiber port for guest threads
 
-## What does not work yet
+None of it plays Mario Kart. All of it is real code, and it works up to the
+point where it needs the recompiled binary.
 
-- **Real recompilation.** The translator emits C++ that needs eight small edits
-  before Emscripten can link it. Documented in
-  [`docs/EMITTER-CHANGES.md`](docs/EMITTER-CHANGES.md).
-- **iOS Safari.** Native `memory64` is not available there yet. The build
-  supports a wasm32-lowered fallback (`WII_RECOMP_SAFARI_COMPAT=1`), but it has
-  not been tested end-to-end.
-- Online play through RWFC. The transport exists, the handshake does not.
+## What this repo is useful for
 
-Read [`docs/LIMITS.md`](docs/LIMITS.md) for the full list.
-
-## How it works
-
-```
-ROM upload ─┐
-            ├─►  Node translation service  ─►  WiiCompiled translator
-            │                                   │
-            │                                   ▼
-            │                              generated C++
-            │                                   │
-            │                                   ▼
-            │                            emcmake + aurora
-            │                                   │
-            │                                   ▼
-            └──────────────►  browser  ◄───  mkwii_recomp.wasm
-                                 │
-                                 ▼
-                            WebGPU canvas
-```
-
-The translation service runs in Docker on the user's own machine. The ROM never
-leaves that machine, and the service deletes both the ROM and the intermediate
-sources immediately after the WASM is produced.
-
-## Requirements
-
-- Node 20+
-- Docker Desktop
-- .NET 8 SDK (for the translator)
-- A legally obtained Mario Kart Wii PAL disc (`RMCP01`)
-
-## Quick start
-
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:5173. Upload a disc image. In **Local** mode you will see
-the stub renderer and real disc parsing.
-
-For real recompilation:
-
-```bash
-powershell -File vendor/setup.ps1               # clone + build the translator
-docker compose -f server/docker-compose.yml up --build
-curl http://localhost:8787/api/health           # all checks should be true
-npm run dev
-```
-
-In the browser, switch to **Server translation**, enter `http://localhost:8787`,
-and use the path mode (the service reads the ISO directly off disk — no upload).
-
-Full walkthrough: [`docs/BUILD.md`](docs/BUILD.md).
-
-## Why this exists
-
-> This is a **vibe-coded project** — written end-to-end with **DeepSeek** as an
-> experiment in what an AI coding assistant can produce when given a real,
-> underspecified, multi-week engineering problem. It is not a product. It is a
-> stress test of the model's ability to hold architecture, cross-language glue,
-> and long-context state together across dozens of turns, and an honest record
-> of where that breaks down.
-
-The final stretch — the eight edits in the C++ emitter, the aurora WebGPU
-backend, and the Safari memory64 situation — are the parts where the AI hit its
-ceiling and a human has to step in. Those are documented, not hidden.
+- **A reference for anyone attempting the same thing.** The `docs/` folder has
+  the emitter port plan, the libco port, and the honest blockers.
+- **A record of where an AI coding assistant hits its ceiling.** The pattern is
+  consistent: anything inside the repo it can edit, it can build. Anything that
+  requires modifying upstream source it can't see, it can't.
+- **A front-end skeleton** for anyone who does solve the recompilation problem
+  later. The worker, disc readers, mod staging, and input layer are
+  recompiler-agnostic.
 
 ## Credit
 
 - **[WiiCompiled](https://github.com/patchzyy/Wiicompiled)** by patchzyy — the
-  actual recompiler and runtime. Without it this project is nothing.
+  actual recompiler. Without it this project doesn't exist.
 - **[WheelWizard](https://github.com/TeamWheelWizard/WheelWizard)** by Team
-  WheelWizard — Retro Rewind, RWFC, and the launcher this project's mod layer
-  imitates.
+  WheelWizard — Retro Rewind and RWFC.
 - **[aurora](https://github.com/encounter/aurora)** by encounter — the GX →
   WebGPU graphics layer.
 - **[Retro Rewind](https://rwfc.net)** — the mod itself.
 
 ## License
 
-No copyrighted game code or assets are distributed. You must supply your own
-legally obtained Mario Kart Wii disc image. The original WiiCompiled, aurora,
-and WheelWizard licenses apply to their respective code.
+No copyrighted game code or assets are distributed. The original WiiCompiled,
+aurora, and WheelWizard licenses apply to their respective code.
 
 The glue code in this repository (front-end, worker, Emscripten platform layer,
 translation service) is released under the **MIT License**.
